@@ -44,19 +44,15 @@ class App extends React.Component {
     constructor() {
         super();
         this.state = {
-            PlotData: null
+            plotData: null
         };
     }
 
     componentDidMount() {
         // TODO: load the data remotely
-        window.HRDScores = HRDScores;
-        window.PhenoTypeData = PhenoTypeData;
 
         // Join the data by sampleID
-        let MergedData = join_data(PhenoTypeData, HRDScores);
-        window.MergedData = MergedData;
-
+        let plotData = join_data(PhenoTypeData, HRDScores);
 
         /*
            let all_types = new Set(PhenoTypeData.map(d => d.sample_type));
@@ -80,28 +76,19 @@ class App extends React.Component {
          */
 
         this.setState({
-            PlotData: MergedData
+            plotData: plotData
         });
     }
 
     render() {
-        if (this.state.PlotData === null)
+
+        if (this.state.plotData === null)
             return null;
-        let ovarian_scores =
-            this.state.PlotData
-                .filter(d => d._primary_disease === "ovarian serous cystadenocarcinoma")
-                .map(d => d.HRD);
+
         return (
             <div className="App">
-                <h3>A simple boxplot showing the distribution of HRD score (0-100) in ovarian cancer</h3>
-                <Boxplot
-                    width={400}
-                    height={20}
-                    orientation="horizontal"
-                    min={0}
-                    max={100}
-                    stats={computeBoxplotStats(ovarian_scores)}
-                />
+                <h3>Distribution of HRD Scores in Breast Cancer and Ovarian Cancer</h3>
+r               <BRCAnessChart plotData={this.state.plotData}/>
             </div>
         );
     }
